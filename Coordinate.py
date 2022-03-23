@@ -1,9 +1,8 @@
-from urllib.request import urlopen
+# -*- coding: UTF-8 -*-
 from urllib.error import HTTPError, URLError
 from bs4 import BeautifulSoup
 from settings import URLERROR_SLEEP_TIME, START_PAGE, NUMBER_OF_THREADS
 
-import GetLocal
 import GetAbstract
 import random
 import datetime
@@ -12,23 +11,23 @@ import lxml
 import threading
 import queue
 import time
+from RequestWorker import RequestWorker
 
 # 初始化随机数种子
 random.seed(datetime.datetime.now())
-
 
 def getLinks(articleUrl):
     '''
     分析网站的源码并返回内链
     '''
     try:
-        html = urlopen("http://en.wikipedia.org" + articleUrl)
+        html = RequestWorker().get("http://zh.wikipedia.org" + articleUrl)
     except HTTPError:
         return None
     except URLError:
         print("Sleeping!")
         time.sleep(URLERROR_SLEEP_TIME)
-        html = urlopen("http://en.wikipedia.org" + articleUrl)
+        html = RequestWorker().get("http://zh.wikipedia.org" + articleUrl)
     bsObj = BeautifulSoup(html, "lxml")
     return bsObj.find("div", {"id": "bodyContent"}).findAll("a", href=re.compile("^(/wiki/)((?!:).)*$"))
 
@@ -60,7 +59,6 @@ def crawlIP(threadName):
     while True:
         linkUrl = links_queue.get()
         linkObj = getLinks(linkUrl)
-        GetLocal.storeIPinfo(linkObj, threadName)
 
 
 def run_spider(threadNum):
