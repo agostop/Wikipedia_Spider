@@ -4,7 +4,7 @@
 '''
 
 # 爬取IP使用的线程数
-NUMBER_OF_THREADS = 4
+NUMBER_OF_THREADS = 1
 
 # 起始页
 START_PAGE = '/wiki/python'

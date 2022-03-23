@@ -5,8 +5,8 @@ from settings import URLERROR_SLEEP_TIME, SLEEP_TIME
 
 import time
 import lxml
-import sqlite3
 
+import MySQLdb
 
 def getAbst(articleUrl):
     '''
@@ -15,11 +15,11 @@ def getAbst(articleUrl):
     time.sleep(SLEEP_TIME)
 
     try:
-        html = urlopen("http://en.wikipedia.org" + articleUrl)
+        html = urlopen("http://zh.wikipedia.org" + articleUrl)
     except URLError:
         print("Sleeping!")
         time.sleep(URLERROR_SLEEP_TIME)
-        html = urlopen("http://en.wikipedia.org" + articleUrl)
+        html = urlopen("http://zh.wikipedia.org" + articleUrl)
     bsObj = BeautifulSoup(html, "lxml")
     title = bsObj.find("h1").get_text()
     content = bsObj.find("div", {"id": "mw-content-text"}).find("p").get_text()
@@ -31,7 +31,7 @@ def storeAbst(link):
     '''
     储存标题和摘要
     '''
-    conn = sqlite3.connect("wikidata.db")
+    conn = MySQLdb.connect("localhost", "root", "111111", "TESTDB", charset='utf8' )
     cur = conn.cursor()
     cur.execute(
         '''CREATE TABLE IF NOT EXISTS pages (id INTEGER PRIMARY KEY AUTOINCREMENT, title varchar(200), content text)''')
